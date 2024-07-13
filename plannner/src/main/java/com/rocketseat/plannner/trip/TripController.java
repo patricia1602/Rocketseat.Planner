@@ -1,8 +1,6 @@
 package com.rocketseat.plannner.trip;
 
-import com.rocketseat.plannner.participant.ParticipantCreateResponse;
-import com.rocketseat.plannner.participant.ParticipantRequestPayload;
-import com.rocketseat.plannner.participant.ParticipantService;
+import com.rocketseat.plannner.participant.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,7 +91,8 @@ public class TripController {
 
             ParticipantCreateResponse participantResponse = this.participantService.registerParticipantToEvent(payload.email(), rawTrip);
 
-            if (rawTrip.getIsConfirmed()) this.participantService.triggerConfirmationEmailToParticipant(payload.email());
+            if (rawTrip.getIsConfirmed())
+                this.participantService.triggerConfirmationEmailToParticipant(payload.email());
 
             return ResponseEntity.ok(participantResponse);
 
@@ -103,5 +102,12 @@ public class TripController {
 
     }
 
+    //Participant
+    @GetMapping("/{id}/participants")
+    public ResponseEntity<List<ParticipantData>> getAllParticipants(@PathVariable UUID id) {
+        List<ParticipantData> participantList = this.participantService.getAllParticipantsFromEvent(id);
+
+        return ResponseEntity.ok(participantList);
+    }
 
 }
