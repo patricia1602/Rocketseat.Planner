@@ -65,7 +65,7 @@ public class TripController {
     }
 
     @GetMapping("/{id}/confirm")
-    public ResponseEntity<Trip>updateTrip(@PathVariable UUID id) {
+    public ResponseEntity<Trip> updateTrip(@PathVariable UUID id) {
         Optional<Trip> trip = this.repository.findById(id);
 
         if (trip.isPresent()) {
@@ -84,16 +84,16 @@ public class TripController {
 
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<ParticipantCreateResponse> createTrip(@PathVariable UUID id, @RequestBody ParticipantRequestPayload payload) {
+    @PostMapping("/{id}/invite")
+    public ResponseEntity<ParticipantCreateResponse> inviteParticipant(@PathVariable UUID id, @RequestBody ParticipantRequestPayload payload) {
         Optional<Trip> trip = this.repository.findById(id);
 
-        if(trip.isPresent()){
+        if (trip.isPresent()) {
             Trip rawTrip = trip.get();
 
-            ParticipantCreateResponse participantResponse = this.participantService.registerParticipantToEvent(payload.email());
+            ParticipantCreateResponse participantResponse = this.participantService.registerParticipantToEvent(payload.email(), rawTrip);
 
-            if (rawTrip.getIsConfirmed()) this.participantService.triggerConfirmationEmailToParticipant();
+            if (rawTrip.getIsConfirmed()) this.participantService.triggerConfirmationEmailToParticipant(payload.email());
 
             return ResponseEntity.ok(participantResponse);
 
